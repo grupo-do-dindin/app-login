@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { Button, Input, Logo } from "@dindin/design-system";
+import { Button, Input, Logo } from "@grupo-do-dindin/design-system";
 import { login, LoginState } from "./actions";
 
 const initialState: LoginState = { error: null };

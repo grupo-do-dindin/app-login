@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
-import { ThemeProvider } from "@dindin/design-system";
+
+import { ThemeProvider } from "next-themes";
 
 import "./globals.css";
 
@@ -26,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={roboto.variable} suppressHydrationWarning>
       <body>
-        <ThemeProvider>
+        <ThemeProvider defaultTheme="light" enableSystem={false}>
           <div className="flex min-h-screen w-full flex-col items-center justify-center bg-white text-black dark:bg-[#202024] dark:text-white">
             {children}
           </div>

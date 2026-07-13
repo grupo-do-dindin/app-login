@@ -45,5 +45,5 @@ export async function login(
     maxAge: 60 * 60 * 8,
   });
 
-  redirect(APP_URL);
+  redirect(`${APP_URL}/transactions`);
 }

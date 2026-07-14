@@ -64,5 +64,5 @@ export async function login(
     return { error: "Erro ao fazer login!" };
   }
 
-  redirect(`${APP_URL}/dashboard`);
+  redirect(`${APP_URL}/transactions`);
 }

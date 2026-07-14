@@ -8,9 +8,12 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-COPY design-system ./design-system
+COPY login/.npmrc ./.npmrc
 COPY login ./login
 COPY root/package.json ./root/package.json
+
+ARG NPM_TOKEN
+ENV NPM_TOKEN=$NPM_TOKEN
 
 RUN npm install
 

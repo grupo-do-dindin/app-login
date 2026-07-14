@@ -1,6 +1,5 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { api } from "./lib/axios";
 
@@ -18,6 +17,8 @@ export async function login(
 ): Promise<LoginState> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  let token: string;
+  let accountId: string;
 
   if (!EMAIL_REGEX.test(email)) {
     return { error: "Informe um e-mail válido." };
@@ -33,7 +34,7 @@ export async function login(
       password,
     });
 
-    const token = data.result.token;
+    token = data.result.token;
 
     const accountResponse = await api.get("/account", {
       headers: {
@@ -41,28 +42,11 @@ export async function login(
       },
     });
 
-    const accountId = accountResponse.data.result.account[0].id;
-
-    const cookieStore = await cookies();
-
-    cookieStore.set("token", token, {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 8,
-    });
-
-    cookieStore.set("accountId", accountId, {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 8,
-    });
-
+    accountId = accountResponse.data.result.account[0].id;
   } catch (err) {
     console.error("Erro ao fazer login:", err);
     return { error: "Erro ao fazer login!" };
   }
 
-  redirect(`${APP_URL}/transactions`);
+  redirect(`${APP_URL}/transactions/auth-callback?token=${token}&accountId=${accountId}`);
 }

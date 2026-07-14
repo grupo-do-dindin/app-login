@@ -53,10 +53,6 @@ export default function LoginPage() {
           {isPending ? "Entrando..." : "Entrar"}
         </Button>
       </form>
-
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">
-        Use demo@dindin.com / dindin123 para testar.
-      </p>
     </div>
   );
 }

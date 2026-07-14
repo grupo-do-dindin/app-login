@@ -11,6 +11,7 @@
   "dependencies": {
     "@grupo-do-dindin/design-system": "^2.0.0",
     "@tailwindcss/postcss": "^4.2.2",
+    "axios": "^1.18.1",
     "next": "16.2.0",
     "next-themes": "^0.4.6",
     "postcss": "^8.5.8",

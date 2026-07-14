@@ -2,10 +2,8 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { api } from "./lib/axios";
 
-const SESSION_COOKIE = "dindin_session";
-const DEMO_EMAIL = process.env.DEMO_EMAIL ?? "demo@dindin.com";
-const DEMO_PASSWORD = process.env.DEMO_PASSWORD ?? "dindin123";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
 export interface LoginState {
@@ -29,21 +27,42 @@ export async function login(
     return { error: "A senha deve ter pelo menos 4 caracteres." };
   }
 
-  if (email !== DEMO_EMAIL || password !== DEMO_PASSWORD) {
-    return { error: "E-mail ou senha incorretos." };
+  try {
+    const { data } = await api.post("/user/auth", {
+      email,
+      password,
+    });
+
+    const token = data.result.token;
+
+    const accountResponse = await api.get("/account", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const accountId = accountResponse.data.result.account[0].id;
+
+    const cookieStore = await cookies();
+
+    cookieStore.set("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 8,
+    });
+
+    cookieStore.set("accountId", accountId, {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 8,
+    });
+
+  } catch (err) {
+    console.error("Erro ao fazer login:", err);
+    return { error: "Erro ao fazer login!" };
   }
 
-  const session = Buffer.from(
-    JSON.stringify({ email, iat: Date.now() }),
-  ).toString("base64");
-
-  const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE, session, {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 8,
-  });
-
-  redirect(`${APP_URL}/transactions`);
+  redirect(`${APP_URL}/dashboard`);
 }
